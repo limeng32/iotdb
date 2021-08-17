@@ -17,11 +17,11 @@
 -- under the License.
 --
 
-drop table if exists connect;
+drop table if exists tb_connect;
 
-drop table if exists query;
+drop table if exists tb_query;
 
-drop table if exists user;
+drop table if exists tb_user;
 
 create table tb_connect
 (
@@ -39,7 +39,7 @@ create table tb_query
    id                   bigint ,
    name                 varchar(100) ,
    sqls                 varchar(10000) ,
-   connect_id           bigint comment 
+   connect_id           bigint  
 );
 
 create table tb_user

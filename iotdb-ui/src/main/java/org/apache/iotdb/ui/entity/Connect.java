@@ -85,24 +85,24 @@ public class Connect extends PojoSupport implements ConnectFace {
 	private Map<Object, QueryFace> queryMap;
 
 	@JSONField(serialize = false)
-	public Map<Object, QueryFace> getQueryMap() {
+	public Map<Object, ? extends QueryFace> getQueryMap() {
 		if (queryMap == null) {
 			queryMap = new LinkedHashMap<Object, QueryFace>();
 		}
 		return queryMap;
 	}
 
-	public Collection<QueryFace> getQuery() {
+	public Collection<? extends QueryFace> getQuery() {
 		return getQueryMap().values();
 	}
 
-	private Iterator<QueryFace> getIteratorQuery() {
+	private Iterator<? extends QueryFace> getIteratorQuery() {
 		return getQuery().iterator();
 	}
 
-	public void setQuery(Collection<QueryFace> newQuery) {
+	public void setQuery(Collection<? extends QueryFace> newQuery) {
 		removeAllQuery();
-		for (Iterator<QueryFace> iter = newQuery.iterator(); iter.hasNext();)
+		for (Iterator<? extends QueryFace> iter = newQuery.iterator(); iter.hasNext();)
 			addQuery(iter.next());
 	}
 
@@ -140,7 +140,7 @@ public class Connect extends PojoSupport implements ConnectFace {
 	public void removeAllQuery() {
 		if (queryMap != null) {
 			QueryFace oldQuery;
-			for (Iterator<QueryFace> iter = getIteratorQuery(); iter.hasNext();) {
+			for (Iterator<? extends QueryFace> iter = getIteratorQuery(); iter.hasNext();) {
 				oldQuery = iter.next();
 				iter.remove();
 				oldQuery.setConnect(null);

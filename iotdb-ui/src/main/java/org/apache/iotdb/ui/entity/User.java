@@ -60,24 +60,24 @@ public class User extends PojoSupport implements UserFace {
 	private Map<Object, ConnectFace> connectMap;
 
 	@JSONField(serialize = false)
-	public Map<Object, ConnectFace> getConnectMap() {
+	public Map<Object, ? extends ConnectFace> getConnectMap() {
 		if (connectMap == null) {
 			connectMap = new LinkedHashMap<Object, ConnectFace>();
 		}
 		return connectMap;
 	}
 
-	public Collection<ConnectFace> getConnect() {
+	public Collection<? extends ConnectFace> getConnect() {
 		return getConnectMap().values();
 	}
 
-	private Iterator<ConnectFace> getIteratorConnect() {
+	private Iterator<? extends ConnectFace> getIteratorConnect() {
 		return getConnect().iterator();
 	}
 
-	public void setConnect(Collection<ConnectFace> newConnect) {
+	public void setConnect(Collection<? extends ConnectFace> newConnect) {
 		removeAllConnect();
-		for (Iterator<ConnectFace> iter = newConnect.iterator(); iter.hasNext();)
+		for (Iterator<? extends ConnectFace> iter = newConnect.iterator(); iter.hasNext();)
 			addConnect(iter.next());
 	}
 
@@ -115,7 +115,7 @@ public class User extends PojoSupport implements UserFace {
 	public void removeAllConnect() {
 		if (connectMap != null) {
 			ConnectFace oldConnect;
-			for (Iterator<ConnectFace> iter = getIteratorConnect(); iter.hasNext();) {
+			for (Iterator<? extends ConnectFace> iter = getIteratorConnect(); iter.hasNext();) {
 				oldConnect = iter.next();
 				iter.remove();
 				oldConnect.setUser(null);
