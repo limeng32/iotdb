@@ -25,26 +25,29 @@ drop table if exists tb_user;
 
 create table tb_connect
 (
-   id                   bigint ,
-   host                 varchar(128) ,
-   port                 integer ,
-   username             varchar(20) ,
-   password             varchar(20) ,
-   alias                varchar(100) ,
-   user_id              bigint 
+   id                   bigint not null comment '主键',
+   host                 varchar(128) comment '地址',
+   port                 integer comment '端口',
+   username             varchar(20) comment '数据源用户名',
+   password             varchar(20) comment '数据源密码',
+   alias                varchar(100) comment '别名',
+   user_id              bigint comment '关联user表外键',
+   primary key (id)
 );
 
 create table tb_query
 (
-   id                   bigint ,
-   name                 varchar(100) ,
-   sqls                 varchar(10000) ,
-   connect_id           bigint  
+   id                   bigint not null comment '主键',
+   name                 varchar(100) comment '查询名',
+   sqls                 varchar(10000) comment '相关sql语句',
+   connect_id           bigint comment '关联connect表外键',
+   primary key (id)
 );
 
 create table tb_user
 (
-   id                   bigint ,
-   name                 varchar(20) ,
-   password             varchar(200) 
+   id                   bigint not null comment '主键',
+   name                 varchar(20) comment '用户名',
+   password             varchar(200) comment '密码',
+   primary key (id)
 );

@@ -24,10 +24,10 @@ spring:
     allow-bean-definition-overriding: true
   data-source1:
     name: dataSource1
-    url: jdbc:mysql://172.20.46.48:3366/iotdb?serverTimezone=GMT%2B8&characterEncoding=utf-8
+    url: jdbc:h2:mem:testdb1;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MV_STORE=FALSE;MVCC=FALSE;FILE_LOCK=NO
     useSSL: false
-    username: admin
-    password: admin
+    username: sa
+    password:
     type: com.alibaba.druid.pool.DruidDataSource
     filters:
     maxActive: 20
@@ -42,15 +42,5 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-endpoints:
-  shutdown:
-    enabled: true
-    sensitive: false
-management:
-  endpoint:
-    shutdown:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+dataSource1:
+    schema: '/db/schema.iotdb-ui.dev.sql'
