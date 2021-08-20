@@ -18,16 +18,56 @@
  */
 package org.apache.iotdb.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 @EnableAsync
 public class Application {
 
-  public static void main(String[] args) throws Exception {
-    SpringApplication.run(Application.class, args);
-  }
+	public static void main(String[] args) throws Exception {
+		SpringApplication.run(Application.class, args);
+	}
+
+	@Bean
+	public HttpMessageConverters fastJsonHttpMessageConverters() {
+
+		// 创建fastJson消息转换器
+		FastJsonHttpMessageConverter fastJsonConverter = new FastJsonHttpMessageConverter();
+		// 创建配置类
+		FastJsonConfig fastJsonConfig = new FastJsonConfig();
+		// 过滤并修改配置返回内容
+		fastJsonConfig.setSerializerFeatures(
+				// List字段如果为null,输出为[],而非null
+				SerializerFeature.WriteNullListAsEmpty
+		// 字符类型字段如果为null,输出为"",而非null
+		// SerializerFeature.WriteNullStringAsEmpty,
+		// Boolean字段如果为null,输出为false,而非null
+		// SerializerFeature.WriteNullBooleanAsFalse,
+		// 消除循环引用特性
+		// SerializerFeature.DisableCircularReferenceDetect,
+		// 是否输出值为null的字段,默认为false。
+		// SerializerFeature.WriteMapNullValue
+		);
+		// 处理中文乱码问题
+		List<MediaType> fastMediaTypes = new ArrayList<>();
+		fastMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+		fastJsonConverter.setSupportedMediaTypes(fastMediaTypes);
+		fastJsonConverter.setFastJsonConfig(fastJsonConfig);
+
+//		HttpMessageConverter<?> converter = fastJsonConverter;
+		return new HttpMessageConverters(fastJsonConverter);
+	}
 }
