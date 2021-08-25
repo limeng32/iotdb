@@ -16,25 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.iotdb.ui.controller;
+package org.apache.iotdb.ui.config.shiro;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.permission.PermissionResolver;
+import org.apache.shiro.authz.permission.WildcardPermission;
+import org.springframework.stereotype.Component;
 
-@Controller
-public class ThymeleafController {
+@Component
+public class MyPermissionResolver implements PermissionResolver {
 
-	@Value("${swagger.apiUrl:/v2/api-docs}")
-	private String apiUrl;
-
-	@RequestMapping(value = "/v2/swagger", method = RequestMethod.GET)
-	public String index(Model model) {
-		model.addAttribute("apiUrl", apiUrl);
-		return "index";
-
+	@Override
+	public Permission resolvePermission(String permissionString) {
+		return new WildcardPermission(permissionString);
+//		return new MyPermission(permissionString);
 	}
 
 }

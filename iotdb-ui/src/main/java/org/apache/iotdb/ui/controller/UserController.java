@@ -20,13 +20,16 @@ package org.apache.iotdb.ui.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.iotdb.ui.config.shiro.UsernamePasswordIdToken;
 import org.apache.iotdb.ui.entity.Connect;
 import org.apache.iotdb.ui.entity.User;
 import org.apache.iotdb.ui.mapper.ConnectDao;
 import org.apache.iotdb.ui.mapper.UserDao;
 import org.apache.iotdb.ui.model.BaseVO;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,14 +49,13 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "登录相关接口")
 public class UserController {
 
+	public static final String USER = "USER";
+
 	@Autowired
 	private UserDao userDao;
 
 	@Autowired
 	private ConnectDao connectDao;
-
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@ApiOperation(value = "errorTest", notes = "test")
 	@GetMapping(value = "/error/{errorName}")
@@ -90,12 +92,21 @@ public class UserController {
 		u.setName(username);
 		User user = userDao.selectOne(u);
 		BaseVO<JSONObject> ret = null;
-		if (user != null && bCryptPasswordEncoder.matches(password, user.getPassword())) {
+		Subject subject = SecurityUtils.getSubject();
+		UsernamePasswordIdToken token = new UsernamePasswordIdToken(username, password, String.valueOf(user.getId()),
+				user.getPassword());
+		user.setPassword(null);
+		try {
+			subject.login(token);
+			Session session = subject.getSession();
+			if (session != null) {
+				session.setAttribute(USER, user);
+			}
 			json.put("status", "ok");
 			json.put("type", "account");
 			json.put("currentAuthority", "admin");
 			ret = BaseVO.success(json);
-		} else {
+		} catch (Exception e) {
 			json.put("status", "error");
 			json.put("type", "account");
 			json.put("currentAuthority", "guest");
@@ -107,8 +118,10 @@ public class UserController {
 	@ApiOperation(value = "/api/currentUser", notes = "/api/currentUser")
 	@RequestMapping(value = "/api/currentUser", method = { RequestMethod.GET, RequestMethod.POST })
 	public BaseVO<JSONObject> currentUser() {
+		Subject subject = SecurityUtils.getSubject();
+		User user = (User) subject.getSession().getAttribute(USER);
 		JSONObject json = new JSONObject();
-		json.put("name", "李萌");
+		json.put("name", user.getName());
 		json.put("avatar", "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png");
 		json.put("userid", "00000001");
 		json.put("email", "limengag@yonyou.com");
@@ -132,5 +145,21 @@ public class UserController {
 		json.put("address", "西湖区工专路 77 号");
 		json.put("phone", "0752-268888888");
 		return BaseVO.success(json);
+	}
+
+	@ApiOperation(value = "/api/outLogin", notes = "/api/outLogin")
+	@RequestMapping(value = "/api/outLogin", method = { RequestMethod.GET, RequestMethod.POST })
+	public JSONObject outLogin() {
+		Subject subject = SecurityUtils.getSubject();
+		subject.logout();
+		JSONObject ret = new JSONObject();
+		ret.put("data", new JSONObject());
+		ret.put("success", true);
+		return ret;
+	}
+
+	// 简单的无返回值的handler，无需写入swagger
+	@RequestMapping(value = "/toLogin", method = { RequestMethod.GET, RequestMethod.POST })
+	public void toLogin() {
 	}
 }

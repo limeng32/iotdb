@@ -24,10 +24,10 @@ spring:
     allow-bean-definition-overriding: true
   data-source1:
     name: dataSource1
-    url: jdbc:mysql://172.20.46.48:3306/iotdb-ui?serverTimezone=GMT%2B8&characterEncoding=utf-8
+    url: jdbc:mysql://10.16.9.89:3306/iotdb-ui?serverTimezone=GMT%2B8&characterEncoding=utf-8
     useSSL: false
-    username: admin
-    password: admin
+    username: root
+    password: rootpass
     type: com.alibaba.druid.pool.DruidDataSource
     filters:
     maxActive: 20
@@ -54,3 +54,5 @@ management:
     web:
       exposure:
         include: '*'
+swagger:
+   enable: true

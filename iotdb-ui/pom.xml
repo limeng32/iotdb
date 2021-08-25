@@ -282,7 +282,7 @@
                 </includes>
             </testResource>
         </testResources>
-        <finalName>flying-spring-boot-starter</finalName>
+        <finalName>iotdb-ui-0.12.2-SNAPSHOT</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

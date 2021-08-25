@@ -46,4 +46,3 @@ dataSource1:
     schema: '/db/schema.iotdb-ui.dev.sql'
 swagger: 
   enable: true
-  apiUrl: http://localhost:8080/v2/api-docs
